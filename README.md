@@ -1,4 +1,4 @@
 image-colors
 ============
 
-Image color information from an image
+A script to get color information from an image
