@@ -26,7 +26,7 @@ class ImageColorsInfo:
 					# reduce similar colors
 					color = ((color_init[0] / rval) * rval, (color_init[1] / rval) * rval, (color_init[2] / rval) * rval)
 					colors[color] = colors.get(color, 0) + 1					
-			sorted_colors = sorted(colors.items(), key=itemgetter(1), reverse=True)#[:N]
+			sorted_colors = sorted(colors.items(), key=itemgetter(1), reverse=True)
 			return sorted_colors
 		except Exception, ex:
 			print ex
