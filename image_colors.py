@@ -53,17 +53,19 @@ class ImageColorsInfo(object):
     def save_top_n_colors_to_html_file(self, filename, top_number, reduce_val=1):
         """Save top number of colors-freq to HTML file"""
         try:
-            number = top_number
+            if reduce_val <= 0:
+                print('Reduce value must be >= 0!')
+                return
             sorted_colors = self.get_image_colors_frequency_sorted(reduce_val)
 
             out = ''
-            out += '<p>Top {} colors:</p>'.format(number)
+            out += '<p>Top {} colors:</p>'.format(top_number)
             out += '<table>\n'
             out += '<tr style="text-align: center">\n'
             out += '<td>Color</td>\n'
             out += '<td>Frequency</td>\n'
             out += '</tr>\n'
-            for d in sorted_colors[:number]:
+            for d in sorted_colors[:top_number]:
                 color = d[0]
                 frequency = d[1]
                 hex_color = (color[0] << 16) + (color[1] << 8) + color[2]
@@ -84,27 +86,26 @@ class ImageColorsInfo(object):
         """Save image divided to size divider_ratio x divider_ratio with average color to HTML file"""
         try:
             if divider_ratio <= 0:
-                print('Divider value must be >= 0')
+                print('Divider value must be >= 0!')
                 return
             if divider_ratio > min(self.image.size):
                 divider_ratio = min(self.image.size)
-            div_ratio = divider_ratio
             width, height = self.image.size
-            nwidth = width / float(div_ratio)
-            nheight = height / float(div_ratio)
+            nwidth = width / float(divider_ratio)
+            nheight = height / float(divider_ratio)
             # pixels_in_nrect = nwidth * nheight
             average_pixels = {}
-            for ny in range(div_ratio):
-                for nx in range(div_ratio):
+            for ny in range(divider_ratio):
+                for nx in range(divider_ratio):
                     average_color = self.__get_average_color_from_rect(
                         int(nx * nwidth), int(ny * nheight), int(math.ceil(nwidth)), int(math.ceil(nheight)))
                     average_pixels[(nx, ny)] = average_color
 
             out = ''
             out += '<table>\n'
-            for iy in range(div_ratio):
+            for iy in range(divider_ratio):
                 out += '<tr height="{}">\n'.format(nheight)
-                for ix in range(div_ratio):
+                for ix in range(divider_ratio):
                     color = average_pixels[ix, iy]
                     hex_color = (color[0] << 16) + (color[1] << 8) + color[2]
                     out += '<td width="{}" bgcolor="#{:06x}" ></td>'.format(nwidth, hex_color)
@@ -155,6 +156,9 @@ def main():
 
     if args.divider <= 0:
         exit('Divider value must be >= 0!')
+
+    if args.reduce_val <= 0:
+        exit('Reduce value must be >= 0!')
 
     image_colors_info = ImageColorsInfo(args.input)
     colors = image_colors_info.get_rgb_info()
